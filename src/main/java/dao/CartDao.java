@@ -58,12 +58,30 @@ public class CartDao extends BaseDao {
 		} catch(Exception e) {
 			e.printStackTrace(System.out);
 		}
-		return products.stream().filter(p -> p.getId() == id).findFirst().get();
+		return product;
 	}
 	
 	// 查詢使用者訂單紀錄
 	public List<Order> queryOrdersByUserId(Integer userId) {
-		return orders.stream().filter(o -> o.getUserId() == userId).toList();
+		List<Order> orders = new ArrayList<Order>();
+		String sql = "SELECT id, user_id, product_id, ts FROM orders WHERE user_id = ?";
+		try(PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
+			pstmt.setInt(1, userId);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				int id = rs.getInt("id");
+				int user_id = rs.getInt("user_id");
+				int product_id = rs.getInt("product_id");
+				Date ts = rs.getDate("ts");
+				Order order = new Order(id, user_id, product_id);
+				orders.add(order);
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace(System.out);
+		}
+		
+		return orders;
 	}
 	
 	public void addOrder(Integer userId, String[] data) {
