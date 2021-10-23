@@ -50,10 +50,14 @@ public class CartController extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 因為已經有 session user 物件, 所以不需要再判斷是否表單有傳 user id
 		String[] data = req.getParameterValues("data");
-		// 將資料存入到 Session 中 (購物車)
-		HttpSession session = req.getSession();
-		session.setAttribute("data", data);
-		resp.sendRedirect(getServletContext().getContextPath() + "/servlet/cart?type=1");
+		if(data == null) {
+			resp.sendRedirect(getServletContext().getContextPath() + "/servlet/cart");
+		} else {
+			// 將資料存入到 Session 中 (購物車)
+			HttpSession session = req.getSession();
+			session.setAttribute("data", data);
+			resp.sendRedirect(getServletContext().getContextPath() + "/servlet/cart?type=1");
+		}
 	}
 	
 	
