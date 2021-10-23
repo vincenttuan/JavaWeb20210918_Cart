@@ -21,8 +21,9 @@ public class LogoutFilter extends HttpFilter {
 			throws IOException, ServletException {
 		HttpSession session = req.getSession(false);
 		session.invalidate();
-		RequestDispatcher rd = req.getRequestDispatcher("/form/login.jsp");
-		rd.forward(req, res);
+		//RequestDispatcher rd = req.getRequestDispatcher("/form/login.jsp");
+		//rd.forward(req, res);
+		res.sendRedirect(getServletContext().getContextPath() + "/servlet/cart");
 	}
 	
 }
