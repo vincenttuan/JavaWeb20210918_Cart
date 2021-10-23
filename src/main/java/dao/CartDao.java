@@ -1,5 +1,6 @@
 package dao;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -42,6 +43,21 @@ public class CartDao extends BaseDao {
 	
 	// 查詢單一商品
 	public Product getPriductById(Integer id) {
+		Product product = null;
+		String sql = "SELECT id, name, qty, price FROM products WHERE id = ?";
+		try(PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
+			pstmt.setInt(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				int pid = rs.getInt("id");
+				String name = rs.getString("name");
+				int qty = rs.getInt("qty");
+				int price = rs.getInt("price");
+				product = new Product(pid, name, qty, price);
+			}
+		} catch(Exception e) {
+			e.printStackTrace(System.out);
+		}
 		return products.stream().filter(p -> p.getId() == id).findFirst().get();
 	}
 	
