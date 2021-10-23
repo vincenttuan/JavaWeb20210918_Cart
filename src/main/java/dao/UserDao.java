@@ -18,7 +18,7 @@ public class UserDao extends BaseDao {
 				int id = rs.getInt("id");
 				String name = rs.getString("name");
 				String password = rs.getString("password");
-				User user = new User(null, name, password);
+				User user = new User(id, name, password);
 				users.add(user);
 			}
 		} catch(Exception e) {

@@ -12,6 +12,7 @@ public class BaseDao {
 		String user = "root";
 		String password = "12345678";
 		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
 			conn = DriverManager.getConnection(url, user, password);
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
