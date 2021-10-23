@@ -1,5 +1,7 @@
 package dao;
 
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,23 +9,34 @@ import java.util.List;
 import entity.Order;
 import entity.Product;
 
-public class CartDao {
+public class CartDao extends BaseDao {
 	
 	private static List<Product> products;
 	private static List<Order> orders;
 	
 	static {
 		orders = new ArrayList<>();
-		products = new ArrayList<>();
-		products.add(new Product(1, "鉛筆", 10, 10));
-		products.add(new Product(2, "橡皮", 20, 10));
-		products.add(new Product(3, "墊板", 30, 20));
-		products.add(new Product(4, "圓規", 40, 30));
-		products.add(new Product(5, "彈珠", 50, 10));
 	}
 	
 	// 查詢所有商品
 	public List<Product> queryProducts() {
+		List<Product> products = new ArrayList<>();
+		String sql = "SELECT id, name, qty, price FROM products";
+		try(Statement stmt = getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(sql)) {
+			
+			while(rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("name");
+				int qty = rs.getInt("qty");
+				int price = rs.getInt("price");
+				Product product = new Product(id, name, qty, price);
+				products.add(product);
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace(System.out);
+		}
 		return products;
 	}
 	
