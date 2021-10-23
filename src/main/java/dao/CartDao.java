@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -11,13 +12,6 @@ import entity.Order;
 import entity.Product;
 
 public class CartDao extends BaseDao {
-	
-	private static List<Product> products;
-	private static List<Order> orders;
-	
-	static {
-		orders = new ArrayList<>();
-	}
 	
 	// 查詢所有商品
 	public List<Product> queryProducts() {
@@ -85,12 +79,20 @@ public class CartDao extends BaseDao {
 	}
 	
 	public void addOrder(Integer userId, String[] data) {
-		// 自編 order id
-		Integer orderId = Math.abs((int)new Date().getTime());
 		if(data != null) {
-			for(String d : data) {
-				Order order = new Order(orderId, userId, Integer.parseInt(d));
-				orders.add(order);
+			String sql = "INSERT INTO orders(user_id, product_id) VALUES(?, ?)";
+			try(PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
+				pstmt.clearBatch();
+				for(String d : data) {
+					Order order = new Order(0, userId, Integer.parseInt(d));
+					pstmt.setInt(1, order.getUserId());
+					pstmt.setInt(2, order.getProductId());
+					pstmt.addBatch();
+				}
+				int[] rows = pstmt.executeBatch();
+				System.out.println("rows: " + Arrays.toString(rows));
+			} catch (Exception e) {
+				e.printStackTrace(System.out);
 			}
 		}
 	}
