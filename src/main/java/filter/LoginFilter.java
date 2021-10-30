@@ -22,8 +22,8 @@ import entity.User;
 public class LoginFilter extends HttpFilter {
 	private UserDao userDao = new UserDao();
 	
-	private Boolean ssoCheck(User user, HttpServletRequest req) throws ServletException {
-		ServletContext context = req.getServletContext();
+	private Boolean ssoCheck(User user) throws ServletException {
+		ServletContext context = getServletContext();
 		if(context.getAttribute("users") == null) { // 首次加入
 			Set<User> users = new LinkedHashSet<>();
 			users.add(user);
@@ -64,7 +64,7 @@ public class LoginFilter extends HttpFilter {
 					if(authCode.equals(authCode_session)) { // authCode 驗證通過
 						
 						// 3. SSO 驗證
-						if(ssoCheck(user, req)) { // SSO 驗證通過
+						if(ssoCheck(user)) { // SSO 驗證通過
 							session.setAttribute("user", user);
 							chain.doFilter(req, res);
 						} else { // SSO 驗證不通過
