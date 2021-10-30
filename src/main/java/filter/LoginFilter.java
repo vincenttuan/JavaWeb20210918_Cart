@@ -30,8 +30,16 @@ public class LoginFilter extends HttpFilter {
 			if(name != null && password != null) {
 				User user = userDao.loginCheck(name, password);
 				if(user != null) { // login success
-					session.setAttribute("user", user);
-					chain.doFilter(req, res);
+					
+					// 確認驗證碼
+					String authCode_session = session.getAttribute("authCode").toString();
+					String authCode = req.getParameter("authCode");
+					if(authCode.equals(authCode_session)) { // authCode 驗證通過
+						session.setAttribute("user", user);
+						chain.doFilter(req, res);
+					} else { // authCode 驗證不通過
+						throw new ServletException("驗證碼錯誤");
+					}
 					return;
 				}
 			}
